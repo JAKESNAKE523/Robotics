@@ -308,35 +308,70 @@ a:hover {
 		width: 100%;
 		grid-template: 75px 1fr 10px / 1fr;
 		font-size: 30px;
-		grid-row-gap: 10px;
 	}
     .header {
+        margin-top: 7.5px;
+        margin-left: 7.5px;
 		grid-area: 1 / 1 / span 1 / span 1;
 		display: grid;
 		grid-template: 75px / 75px 1fr;
         font-size: 12px;
 	}
 	.logo {
-		margin-left: 7px;
-        margin-top: 8px;
+        width: 60px;
+        height: 60px;
 		grid-area: 1 / 1 / span 1 / span 1;
 		background-image: url("../images/logo.jpg");
 		background-size: cover;
 		background-position: center;
         background-color: white;
 	}
-    .dropdownMenu {
-        background-image: url("../images/menu.png");
+    #dropdownMenu {
+        /*background-image: url("../images/menu.png");
         background-size: cover;
         background-position: center;
-        width: 70px;
-        height: 70px;
-        margin-top: 7px;
+        border-radius: 50px;*/
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 65px;
+        height: 65px;
         margin-left: auto;
         margin-right: 5px;
         background-color: white;
         border: 0;
         outline: none;
+    }
+    /*
+    #dropdownMenu.none {
+        max-height: 65px;
+        transform: rotate(0deg);
+        transition: transform 1s ease;
+    }
+    #dropdownMenu.clicked {
+        transform: rotate(90deg);
+        transition: transform 1s ease;
+    }*/
+    .line1 {
+        margin-top: 4px;
+    }
+    .line1, .line2, .line3 {
+        border-radius: 5px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 7px;
+        height: 3px;
+        width: 30px;
+        background-color: black;
+        transition: transform 0.3s ease;
+    }
+    #dropdownMenu.clicked  > .line1{
+        transform: translateY(9px);
+        transition: transform 0.3s ease;
+    }
+    #dropdownMenu.clicked  > .line3{
+        transform: translateY(-11px);
+        transition: transform 0.3s ease;
     }
 	.homenav{
         align-items: flex-end;
@@ -364,10 +399,10 @@ a:hover {
         opacity: 0;
     }
     #navigation.none {
+        margin-top: -7px;
+        margin-left: -8px;
         font-family: 'Quicksand';
         text-align: center;
-        margin-top: 10px;
-        padding-top: 5px;
         width: 100vw;
         font-size: 7.25vw;
         background-color: rgba(1,1,1,0.5);
@@ -381,11 +416,11 @@ a:hover {
         opacity: 0;
     }
     #navigation.clicked {
+        margin-top: -7px;
+        margin-left: -8px;
         opacity: 1;
         font-family: 'Quicksand';
         text-align: center;
-        margin-top: 10px;
-        padding-top: 5px;
         width: 100vw;
         font-size: 7.25vw;
         background-color: rgba(1,1,1,0.5);
@@ -401,7 +436,7 @@ a:hover {
         grid-area: 2 / 1 / span 1 / span 1;
         display: grid;
 	    grid-template-columns: 1fr;
-	    grid-template-rows: 94vh repeat(3, 100vh) 100vh;
+	    grid-template-rows: calc(100vh-75px) repeat(3, 100vh) 100vh;
 	    background-color: white;
 	}
     .container1 {

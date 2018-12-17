@@ -9,10 +9,13 @@
         let toggle = -1;
         function dropdown() {
             let navmenu = document.getElementById('navigation');
+            let dropmenu = document.getElementById('dropdownMenu');
             if(toggle === 1){
                 navmenu.setAttribute('class', 'none');
+                dropmenu.setAttribute('class', 'none');
             }else{
                 navmenu.setAttribute('class', 'clicked');
+                dropmenu.setAttribute('class', 'clicked');
             }
             toggle *= -1;
         }
@@ -22,7 +25,12 @@
     <div class=header>
       <div class=logo>
       </div>
-      <button class='dropdownMenu' onclick="dropdown()"></button>
+      
+      <div onclick="dropdown()" id='dropdownMenu' class='none'>
+          <div class='line1'></div>
+          <div class='line2'></div>
+          <div class='line3'></div>
+      </div>
       <ul id='navigation' class='initial'><li><div class=homenav>
           <a href="index.html">Home</a>
             </div></li>
