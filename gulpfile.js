@@ -13,24 +13,22 @@ const gulp = require('gulp'),
     autoprefixer = require('autoprefixer'),
     mqpacker = require('css-mqpacker'),
     cssnano = require('cssnano'),
+    deploy = require('gulp-gh-pages'),
     devBuild = (process.env.NODE_ENV !== 'production'),
     folder = {
-        src: 'src/',
-        build: 'build/'
+        src: '',
+        build: 'dist/'
     }
 ;
 gulp.task('images', function() {
     var out = folder.build + 'images/';
-    gulp.src(folder.src + 'images/*').pipe(newer(folder.build + 'src/images/')).pipe(gulp.dest(folder.build + 'src/images/'));
     return gulp.src(folder.src + 'images/*').pipe(newer(out)).pipe(imagein({ optimizationLevel: 5 })).pipe(gulp.dest(out)).pipe(livereload());
 });
 gulp.task('html', function() {
     var out = folder.build;
-    var page = gulp.src(folder.src + 'html/*').pipe(newer(out));
+    var page = gulp.src(folder.src + '*.html').pipe(newer(out));
     page = page.pipe(htmlclean());
-    gulp.src(folder.src + 'html/*').pipe(newer(folder.build + 'src/html/')).pipe(gulp.dest(folder.build + 'src/html/'));
-    return page.pipe(gulp.dest(out)).pipe(livereload());
-    
+    return page.pipe(gulp.dest(out));
 });
 gulp.task('css', function(){
     var postCssOpts = [
@@ -39,18 +37,13 @@ gulp.task('css', function(){
        mqpacker
     ];
     postCssOpts.push(cssnano);
-    gulp.src(folder.src + 'css/*').pipe(newer(folder.build + 'src/css/')).pipe(gulp.dest(folder.build + 'src/css/'));
-    return gulp.src(folder.src + 'css/*').pipe(newer(folder.build + 'css/')).pipe(postcss(postCssOpts)).pipe(gulp.dest(folder.build + 'css/')).pipe(livereload());
+    return gulp.src(folder.src + 'css/*').pipe(newer(folder.build + 'css/')).pipe(postcss(postCssOpts)).pipe(gulp.dest(folder.build + 'css/'));
 });
 gulp.task('js', function() {
-    gulp.src(folder.src + 'js/*').pipe(newer(folder.build + 'src/js/')).pipe(gulp.dest(folder.build + 'src/js/'));
     return gulp.src(folder.src + 'js/*').pipe(newer(folder.build + 'js/')).pipe(uglify()).pipe(gulp.dest(folder.build + 'js/')).pipe(livereload());
 });
 gulp.task('extras', function(){
-    gulp.src(folder.src + '*', folder.src + '!css/*', folder.src + '!js/', folder.src + '!html/*', folder.src + '!images/*').pipe(gulp.dest(folder.build + 'src/'));
-    gulp.src('gulpfile.js').pipe(gulp.dest(folder.build + 'src/'));
-    gulp.src('package.json').pipe(gulp.dest(folder.build + 'src/'));
-    return gulp.src(folder.src + '*', folder.src + '!css/*', folder.src + '!js/*', folder.src + '!html/*', folder.src + '!images/*').pipe(gulp.dest(folder.build));
+    return gulp.src(folder.src + 'sitemap.xml',).pipe(gulp.dest(folder.build));
 });
 gulp.task('build', gulp.series('js', 'html', 'images', 'css', 'extras'));
 gulp.task('run', function(){
@@ -59,34 +52,7 @@ gulp.task('run', function(){
     gulp.watch(folder.src + 'html/*', gulp.series('html'));
     gulp.watch(folder.src + 'css/*', gulp.series('css'));
 });
-gulp.task('add', function (){
-    return gulp.src(folder.build).pipe(git.add());
-});
-gulp.task('commit', function (){
-    process.chdir(folder.build);
-    return gulp.src(folder.build).pipe(git.commit(args.m));
-})
-gulp.task('push', function(){
-    process.chdir(folder.build);
-    git.push('https://github.com/jakesnake523/jakesnake523.github.io', 'master', function (err) {
-        if (err) throw err;
-    });
-});
-gulp.task('updateSource', function (){
-    gulp.src(folder.build + 'src/gulpfile.js').pipe(newer('./')).pipe(gulp.dest('./'));
-    gulp.src(folder.build + 'src/package.json').pipe(newer('./')).pipe(gulp.dest('./'));
-    return gulp.src(folder.build + 'src/*', folder.build + 'src/!gulpfile.js', folder.build + 'src/!package.json').pipe(newer(folder.src)).pipe(gulp.dest(folder.src));
-});
-gulp.task('pull', gulp.series(function (){
-    process.chdir(folder.build);
-    return git.pull('https://github.com/jakesnake523/jakesnake523.github.io', 'master', function (err) {
-        if (err) throw err;
-    });
-}, 'updateSource'));
-gulp.task('fetch', function (){
-    process.chdir(folder.build);
-    git.fetch('origin', '', function (err) {
-        if (err) throw err;
-    });
-});
+gulp.task('deploy', gulp.series('build', function() {
+    return gulp.src('./dist/**/*').pipe(deploy());
+}));
 gulp.task('default', gulp.series('run'));
